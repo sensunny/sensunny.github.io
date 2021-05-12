@@ -1,0 +1,13 @@
+.css-1vr111p-option,
+.css-1qprcsu-option {
+  display: flex !important;
+  color: grey;
+}
+.filter_wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.filter_state_select button {
+  min-width: 150px;
+}

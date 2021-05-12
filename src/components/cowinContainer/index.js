@@ -1,94 +1,57 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 // import card from "../card"
+import "./style.css"
+import Button from '@material-ui/core/Button';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import moment from "moment"
 
-let delhiPinCodes = {
-    "districts": [
-        {
-            "district_id": 141,
-            "district_name": "Central Delhi"
-        },
-        {
-            "district_id": 145,
-            "district_name": "East Delhi"
-        },
-        {
-            "district_id": 140,
-            "district_name": "New Delhi"
-        },
-        {
-            "district_id": 146,
-            "district_name": "North Delhi"
-        },
-        {
-            "district_id": 147,
-            "district_name": "North East Delhi"
-        },
-        {
-            "district_id": 143,
-            "district_name": "North West Delhi"
-        },
-        {
-            "district_id": 148,
-            "district_name": "Shahdara"
-        },
-        {
-            "district_id": 149,
-            "district_name": "South Delhi"
-        },
-        {
-            "district_id": 144,
-            "district_name": "South East Delhi"
-        },
-        {
-            "district_id": 150,
-            "district_name": "South West Delhi"
-        },
-        {
-            "district_id": 142,
-            "district_name": "West Delhi"
-        }
-    ],
-    "ttl": 24
-}
-
-export default function Container() {
+export default function Container(props) {
     const [intialState, setInitialState] = useState(0)
     let [cardInfo, setCards] = useState({})
+    let [totalAvailableCount, setTotalCount] = useState(0)
+    let initialbaseUrl = JSON.parse(localStorage.getItem("baseUrlIndex")) || localStorage.setItem("baseUrlIndex", false)
+    let [baseUrlIndex, setBaseUrl] = useState(initialbaseUrl || false)
     useEffect((() => {
-        setInterval(() => {
-            let allData = {}
-            delhiPinCodes.districts.map((c) => {
-                axios.get(`https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict?district_id=${c.district_id}&date=11-05-2021`)
-                    .then((res) => {
-                        let { data: { centers } } = res
-                        centers.map(item => {
-                            let totalAvailableSlot = 0
-                            item.sessions.map((s) => {
-                                totalAvailableSlot += s.min_age_limit < 45 ? s.available_capacity : 0
-                            })
-                            if (totalAvailableSlot) {
-                                allData = {
-                                    ...allData,
-                                    [item.pincode]: allData[item.pincode] ? allData[item.pincode] + totalAvailableSlot : totalAvailableSlot
-                                }
-                            }
+        let allData = {}
+        let count = 0
+        props.districtArray.map((c) => {
+            axios.get(`https://cdn-api.co-vin.in/api/v2/appointment/sessions/${baseUrlIndex ? 'public/' : ''}calendarByDistrict?district_id=${c.district_id}&date=${moment().format("DD-MM-YYYY")}`)
+                .then((res) => {
+                    let { data: { centers } } = res
+                    centers.map(item => {
+                        let totalAvailableSlot = 0
+                        item.sessions.map((s) => {
+                            totalAvailableSlot += s.min_age_limit < 45 ? s.available_capacity : 0
                         })
-                        // allData.push(res.data.centers)
-                        console.log(allData)
-                        setCards(allData)
-                        // setCards(res.data)
+                        if (totalAvailableSlot) {
+                            allData = {
+                                ...allData,
+                                [item.pincode]: allData[item.pincode] ? allData[item.pincode] + totalAvailableSlot : totalAvailableSlot
+                            }
+                        }
+                        count += totalAvailableSlot
                     })
-            })
-        }, 5000)
-    }), [])
-    console.log(cardInfo)
+                    setTotalCount(count)
+                    // allData.push(res.data.centers)
+                    setCards(allData)
+                    // setCards(res.data)
+                }).catch(() => {
+                    setCards({})
+                    setTotalCount(0)
+                    localStorage.setItem("baseUrlIndex", !baseUrlIndex)
+                    setBaseUrl(!baseUrlIndex)
+                })
+        })
+    }), [props.districtArray])
     return (
-        <div>{Object.keys(cardInfo).map((keys) => {
-            return <span style={{
-                display: "inlineBlock",
-                marginTop: "20px"
-            }}><span style={{ color: "Red", background: "yellow", padding: "5px 10px" }} >{keys}: </span><span style={{ color: "green", background: "yellow", padding: "5px 10px" }}>{cardInfo[keys]}</span>{" "}</span>
-        })}</div>
+        <div className="slots_info">
+            {totalAvailableCount > 0 ? Object.keys(cardInfo).map((keys) => {
+                return <div className="slots_inline" style={{
+                    display: "inlineBlock",
+                    marginTop: "20px"
+                }}>
+                    <Button onClick={() => { navigator.clipboard.writeText(keys) }} variant="contained" color="primary">{keys}{" "} <FileCopyIcon /> </Button><Button variant="contained" color="secondary">{cardInfo[keys]}</Button>{" "}</div>
+            }) : <Button style={{ marginTop: "20px" }} variant="contained" color="secondary">NO SLOT AVAILABLE, Try Refresh!</Button>}</div>
     )
 }
