@@ -10,6 +10,7 @@ export default function filter() {
             type: "multiSelect"
         }
     ]
+
     return null
 
 }
