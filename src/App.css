@@ -23,11 +23,10 @@ button {
 }
 
 .App-header {
-  background-color: grey;
-  min-height: 100vh;
   display: block;
   overflow-y: auto;
   padding: 20px;
+  height: 94vh;
   /* padding-top: 50px; */
   /* justify-content: center; */
   /* font-size: calc(10px + 2vmin); */
