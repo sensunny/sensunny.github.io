@@ -4,7 +4,7 @@ import ListContainer from "./../cowinContainer"
 import "./style.css"
 import Button from '@material-ui/core/Button';
 
-export default function CityList({ selectedCity, refreshNumber, setIntevalForRefresh }) {
+export default function CityList({ selectedCity, refreshNumber, setIntevalForRefresh, selectedAge }) {
     let [forToggle, setToggle] = useState(false)
     let [districtArray, setDistrictArray] = useState([])
     useEffect(() => {
@@ -22,7 +22,6 @@ export default function CityList({ selectedCity, refreshNumber, setIntevalForRef
         setIntevalForRefresh(60)
         setToggle(!forToggle)
     }
-    console.log("selectedCity", refreshNumber);
     return <div className="city_wrapper">
         <Button variant="contained">{selectedCity.label}{"  "}</Button>
         {!refreshNumber ? <Button variant="contained" style={{ background: "orange", marginLeft: "10px" }} onClick={() => handleRefresh()}>
@@ -30,6 +29,7 @@ export default function CityList({ selectedCity, refreshNumber, setIntevalForRef
         </Button> : null}
         <div className="city_list_content">
             <ListContainer
+                selectedAge={selectedAge}
                 districtArray={districtArray || []}
             />
         </div>

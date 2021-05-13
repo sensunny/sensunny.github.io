@@ -49,3 +49,12 @@ label {
     transform: rotate(360deg);
   }
 }
+
+@media screen and (max-width: 768px) {
+  .MuiTypography-body1 {
+    font-size: 0.8rem !important;
+  }
+  .MuiTypography-h5 {
+    font-size: 1rem !important;
+  }
+}

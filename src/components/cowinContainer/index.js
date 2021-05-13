@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import moment from "moment"
 
-export default function Container(props) {
+export default function Container({ districtArray, selectedAge }) {
     const [intialState, setInitialState] = useState(0)
     let [cardInfo, setCards] = useState({})
     let [totalAvailableCount, setTotalCount] = useState(0)
@@ -15,14 +15,14 @@ export default function Container(props) {
     useEffect((() => {
         let allData = {}
         let count = 0
-        props.districtArray.map((c) => {
+        districtArray.map((c) => {
             axios.get(`https://cdn-api.co-vin.in/api/v2/appointment/sessions/${baseUrlIndex ? 'public/' : ''}calendarByDistrict?district_id=${c.district_id}&date=${moment().format("DD-MM-YYYY")}`)
                 .then((res) => {
                     let { data: { centers } } = res
                     centers.map(item => {
                         let totalAvailableSlot = 0
                         item.sessions.map((s) => {
-                            totalAvailableSlot += s.min_age_limit < 45 ? s.available_capacity : 0
+                            totalAvailableSlot += s.min_age_limit === parseInt(selectedAge) ? s.available_capacity : 0
                         })
                         if (totalAvailableSlot) {
                             allData = {
@@ -34,6 +34,8 @@ export default function Container(props) {
                     })
                     setTotalCount(count)
                     // allData.push(res.data.centers)
+                    // allData.sor((a, b) => allData[a] > allData[b])
+                    // console.log("allData", allData)
                     setCards(allData)
                     // setCards(res.data)
                 }).catch(() => {
@@ -43,11 +45,11 @@ export default function Container(props) {
                     setBaseUrl(!baseUrlIndex)
                 })
         })
-    }), [props.districtArray])
+    }), [districtArray])
     return (
         <div className="slots_info">
             {totalAvailableCount > 0 ? Object.keys(cardInfo).map((keys) => {
-                return <div className="slots_inline" style={{
+                return <div key={keys} className="slots_inline" style={{
                     display: "inlineBlock",
                     marginTop: "20px"
                 }}>

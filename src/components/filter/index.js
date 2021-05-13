@@ -1,10 +1,10 @@
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import MutliSelect from "react-multiselect-checkboxes"
+import ToggleButtons from "../Toggler"
 import "./style.css"
 
-export default function Filter({ setCities, setIntevalForRefresh, refreshNumber }) {
-    const [intialState, setInitialState] = useState(0)
+export default function Filter({ setCities, setIntevalForRefresh, refreshNumber, setAge, selectedCities, selectedAge }) {
     const [initailStates, setStates] = useState([])
     const [isLoadingAPI, setLoader] = useState(true)
     useEffect(() => {
@@ -28,14 +28,23 @@ export default function Filter({ setCities, setIntevalForRefresh, refreshNumber 
             <MutliSelect
                 isLoading={isLoadingAPI}
                 options={initailStates}
+                value={selectedCities}
                 isDisabled={refreshNumber}
-                placeholderButtonLabel="Select Your City"
+                placeholderButtonLabel="Select Your States"
                 onChange={(e) => {
                     setCities(e)
-                    setIntevalForRefresh(60)
+                    e.length && setIntevalForRefresh(60)
                 }}
             />
         </div>
+        <ToggleButtons
+            handleRadioChange={(e) => {
+                setAge(e.target.value)
+                setCities([])
+            }}
+            selectedAge={selectedAge}
+            isDisabled={refreshNumber}
+        />
     </div>
 
 }

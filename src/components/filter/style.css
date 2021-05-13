@@ -6,8 +6,22 @@
 .filter_wrapper {
   display: flex;
   align-items: center;
+  margin-top: 20px;
 }
 
 .filter_state_select button {
   min-width: 150px;
+}
+.filter_state_select {
+  margin-right: 20px;
+  font-size: 14px;
+}
+.filter_wrapper .MuiFormGroup-root {
+  flex-direction: row;
+}
+.filter_wrapper .MuiCardContent-root:last-child {
+  padding: 2px 20px;
+}
+.filter_wrapper .MuiTypography-body1 {
+  color: black;
 }
