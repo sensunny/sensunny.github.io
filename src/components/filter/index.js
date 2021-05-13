@@ -32,7 +32,7 @@ export default function Filter({ setCities, setIntevalForRefresh, refreshNumber,
                 isDisabled={refreshNumber}
                 placeholderButtonLabel="Select Your States"
                 onChange={(e) => {
-                    selectedCities.length < e.length && setIntevalForRefresh(60)
+                    selectedCities.length < e.length && setIntevalForRefresh(10)
                     setCities(e)
                 }}
             />

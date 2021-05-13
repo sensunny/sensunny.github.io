@@ -12,14 +12,14 @@ export default function CityList({ selectedCity, refreshNumber, setIntevalForRef
             .then(res => {
                 const { data: { districts } } = res
                 setDistrictArray(districts)
-                setIntevalForRefresh(60)
+                setIntevalForRefresh(10)
             }).catch(() => {
-                setIntevalForRefresh(60)
+                setIntevalForRefresh(10)
             })
     }, [selectedCity.value, forToggle])
     let handleRefresh = () => {
         console.log("setToggle", setToggle)
-        setIntevalForRefresh(60)
+        setIntevalForRefresh(10)
         setToggle(!forToggle)
     }
     return <div className="city_wrapper">
